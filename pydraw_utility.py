@@ -24,7 +24,6 @@ class button():
     def draw(self,win):
         win.blit(self.surface, self.rect)
 
-
 class width_widget():
     def __init__(self, x, y) -> None:
         self.font_surf = pg.font.SysFont("comicsans", 30, True)
@@ -44,6 +43,31 @@ class width_widget():
         if self.left_button_rect.collidepoint(pos) and attribute_value_dict["width"] > 1: attribute_value_dict["width"] -= 1
         elif self.right_button_rect.collidepoint(pos) and attribute_value_dict["width"] < 10: attribute_value_dict["width"] += 1
         else: return True
+
+class color_picker_widget():
+    def __init__(self,x,y):
+        self.rect = pg.Rect(x,y,196,200)
+
+        self.colors = {
+            0:{0:attribute_value_dict["primary-color"], 1:attribute_value_dict["secondary-color"]},
+            1:{0:(255,0,0), 1:(0,255,0)},
+            2:{0:(0,0,255), 1:(255,255,0)},
+            3:{0:(0,255,255), 1:(255,0,255)},
+            4:{0:(128,128,128), 1:(128,0,0)},
+            5:{0:(173,255,47), 1:(127,255,212)},
+        }
+    
+    def draw(self,win):
+        for y, row in self.colors.items():
+            for x, color in row.items():
+                pg.draw.rect(win,color,(self.rect.x+42*x,self.rect.y+42*y,40,40))
+
+    def detect_click(self,pos):
+        x, y = pos[0]//41, (pos[1]-self.rect.y)//41
+        try:
+            attribute_value_dict['primary-color'] = self.colors[y][x]
+        except:
+            ...
 
 class tool():
     def __init__(self, size:tuple[int, int], pos:tuple[int, int], icon:pg.Surface) -> None:
@@ -68,6 +92,7 @@ class pencil_tool(tool):
         self.id = id
 
         self.widgets.append(width_widget(0,2))
+        self.widgets.append(color_picker_widget(0,46))
 
         self.setup_surface()
 
